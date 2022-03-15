@@ -14,6 +14,36 @@ public class Cart {
         return items.add(item);
     }
 
+    public boolean removeItem(Item item) {
+        if(getItem(item).subQuantity(item.getQuantity())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteItem(Item item) {
+        items.remove(getItem(item));
+        return true;
+    }
+
+    public boolean containItem(Item item) {
+        for(int i = 0; i < items.size(); i++) {
+            if(items.get(i).getProduct() == item.getProduct()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Item getItem(Item item) {
+        for(int i = 0; i < items.size(); i++) {
+            if(items.get(i).getProduct() == item.getProduct()) {
+                return items.get(i);
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         if (items.size() ==0){

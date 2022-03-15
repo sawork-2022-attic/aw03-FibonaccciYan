@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class PosController {
@@ -19,9 +20,37 @@ public class PosController {
 
     @GetMapping("/")
     public String pos(Model model) {
-        posService.add("PD1",2);
+        // posService.add("PD1",2);
         model.addAttribute("products", posService.products());
         model.addAttribute("cart", posService.getCart());
+        model.addAttribute("total", posService.total(posService.getCart()));
         return "index";
     }
+
+    @GetMapping("/add/{productId}/{amount}")
+    public String add(Model model, @PathVariable String productId, @PathVariable int amount) {
+        if(amount > 0) {
+            posService.add(productId, amount);
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/sub/{productId}/{amount}")
+    public String sub(Model model, @PathVariable String productId, @PathVariable int amount) {
+        posService.sub(productId, amount);
+        return "redirect:/";
+    }
+
+    @GetMapping("/delete/{productId}")
+    public String delete(Model model, @PathVariable String productId) {
+        posService.delete(productId);
+        return "redirect:/";
+    }
+
+    @GetMapping("/clear")
+    public String clear(Model model) {
+        posService.newCart();
+        return "redirect:/";
+    }
+
 }

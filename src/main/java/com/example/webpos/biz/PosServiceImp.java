@@ -40,8 +40,13 @@ public class PosServiceImp implements PosService {
     }
 
     @Override
-    public void total(Cart cart) {
+    public double total(Cart cart) {
+        double sum = 0;
+        for(Item item: cart.getItems()) {
+            sum += item.getQuantity() * item.getProduct().getPrice();
+        }
 
+        return sum;
     }
 
     @Override
@@ -55,7 +60,31 @@ public class PosServiceImp implements PosService {
         Product product = posDB.getProduct(productId);
         if (product == null) return false;
 
-        this.getCart().addItem(new Item(product, amount));
+        if(this.getCart().containItem(new Item(product, amount))) {
+            this.getCart().getItem(new Item(product, amount)).addQuantity(amount);
+        } else {
+            this.getCart().addItem(new Item(product, amount));
+        }
+        return true;
+    }
+
+    @Override
+    public boolean sub(String productId, int amount) {
+        Product product = posDB.getProduct(productId);
+        if (product == null) return false;
+
+        if(this.getCart().removeItem(new Item(product, amount)) == false) {
+            this.delete(productId);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(String productId) {
+        Product product = posDB.getProduct(productId);
+        if (product == null) return false;
+
+        this.getCart().deleteItem(new Item(product, -1));
         return true;
     }
 
